@@ -21,7 +21,7 @@ def save_entry(title, content):
     filename = f"entries/{title}.md"
     if default_storage.exists(filename):
         default_storage.delete(filename)
-    default_storage.save(filename, ContentFile(content))
+    default_storage.save(filename, ContentFile(content.encode('utf8')))
 
 
 def get_entry(title):
@@ -31,7 +31,7 @@ def get_entry(title):
     """
     try:
         f = default_storage.open(f"entries/{title}.md")
-        data = f.read().decode("utf-8")
+        data = f.read().decode("utf8")
         return data
     except FileNotFoundError:
         return None
