@@ -28,9 +28,9 @@ def show_entry(request,title):
     })
 
 def edit_entry(request,title):
-    if request == "POST":
+    if request.POST:       
         editEntryForm = EditEntryForm(request.POST)
-        if editEntryForm.is_valid:
+        if editEntryForm.is_valid():
             title = editEntryForm.cleaned_data.get("title")
             body = editEntryForm.cleaned_data.get("body")
             util.save_entry(title,body)
