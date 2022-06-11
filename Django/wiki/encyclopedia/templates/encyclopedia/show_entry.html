@@ -7,7 +7,9 @@
 {% block body %}
 
 <div class="container">
-    {{ entry | safe }}
+    <pre>
+        {{ entry | safe  }}
+    </pre>
 </div>
 
 <a href="{% url 'edit_entry' title %}">EDIT</a>
