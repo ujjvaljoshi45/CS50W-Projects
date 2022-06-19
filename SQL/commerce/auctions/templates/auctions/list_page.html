@@ -1,0 +1,24 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    <div>
+        <h1><strong>{{ product.title }}</strong></h1> <br>
+    </div>
+
+    <div>
+        <img src="{{product.image_url}}" style="height: 250px; width: 250px;"> <br>
+        <br>
+        <p><strong>Description :</strong> {{product.description}} </p>
+        <p><strong>Category :</strong> {{product.category}} </p>
+        <p><strong>Current Bid Price :</strong> {{product.bid_start}} </p>
+        <p><strong>Seller :</strong> {{product.seller_name}} </p>
+        <p><strong>Created On :</strong> {{product.created_time}} </p>
+    </div>
+
+    
+{% endblock %}

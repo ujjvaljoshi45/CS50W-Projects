@@ -1,12 +1,19 @@
+from dataclasses import fields
+from pyexpat import model
+from typing import List
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.forms import ModelForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User, Listing
 
-
+class ListingForm(ModelForm):
+    class Meta:
+        model = Listing
+        fields = ['title','description','bid_start','category','image_url']
 def index(request):
     # if request.user.is_authenticatied():
     return render(request, "auctions/index.html",{
@@ -73,4 +80,32 @@ def watchlist(request):
     return render(request,"auctions/watchlist.html")
 
 def create_listing(request):
-    return render(request,"auctions/create_listing.html")
+    if request.POST:
+        item = Listing()
+
+        item.seller_name = request.user.username
+        item.title = request.POST.get('title')
+        item.description = request.POST.get('description')
+        item.category = request.POST.get('category')
+        item.bid_start = request.POST.get('bid_start')
+
+        if request.POST.get('image_url'):
+            item.image_url = request.POST.get('image_url')
+        else:
+            item.image_url = "https://www.aust-biosearch.com.au/wp-content/themes/titan/images/noimage.gif"
+        item.save()
+        listing = Listing.objects.all()
+        empty = False
+        if len(listing) == 0:
+            empty = True
+        return render(request,"auctions/index.html",{
+            "listing":listing
+        })
+    else:
+        return render(request,"auctions/create_listing.html")
+def list_page(request,list_id):
+    
+    item = Listing.objects.get(id = list_id)
+    return render(request,"auctions/list_page.html",{
+        "product":item
+    })

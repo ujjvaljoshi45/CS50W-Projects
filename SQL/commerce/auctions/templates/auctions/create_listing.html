@@ -1,5 +1,32 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>Work in Progress</h1>
+    {% if message %}
+        <div>{{message}}</div>
+    {% endif %}
+
+    <div>
+        <h1><strong>Create Listing</strong></h1>
+    </div>
+
+    <div style="margin: 25px; padding: 25px;">
+        <form action="{% url 'create_listing' %}" method="POST">
+            {% csrf_token %}
+            <div>
+                <input autofocus type="text" name="title" placeholder="Title"> <br><br>
+                <textarea name="description" rows="4" placeholder="Description"></textarea><br><br>
+                <select name="category" placeholder="Category" required>
+                    <option value="">Choose a Category</option> 
+                    <option value="fashion">Fashion</option>
+                    <option value="tools">Tools</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="books">Books</option>
+                </select><br><br>
+                <input type="text" name="bid_start" placeholder="Starting Bid"><br><br>
+                <input type="text" name="image_url" placeholder="Image Url"><br><br>
+                <input type="submit" value="Create"><br><br>
+            </div>
+        </form>
+    </div>
 {% endblock %}
