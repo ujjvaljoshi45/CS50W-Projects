@@ -1,6 +1,16 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>Categories</h1>
-    <h1>Work in Progress</h1>
+    <h1 style="text-align: center;">Categories</h1>
+   <div style="text-align: center; margin: 15px;">
+    <ul class="list-group" style=" margin: 15px; list-style-type:none; font-size: 24px ;">
+        <a href="{% url 'category' 'fashion' %}"><li> Fashion</li></a>
+        <a href="{% url 'category' 'tools' %}"><li> Tools</li></a>
+        <a href="{% url 'category' 'toys' %}"><li> Toys</li></a>
+        <a href="{% url 'category' 'electronics' %}"><li> Electronics</li></a>
+        <a href="{% url 'category' 'accessories' %}"><li> Accessories</li></a>
+        <a href="{% url 'category' 'books' %}"><li> Books</li></a>
+    </ul>
+
+   </div>
 {% endblock %}

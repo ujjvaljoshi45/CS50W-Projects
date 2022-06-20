@@ -1,0 +1,27 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    <center>
+        <h1>Active Listings with Category {{category}}</h1>
+        <div>
+            {% if empty %}
+                <h3>No Listing Found!</h3>
+            {% endif %}
+        </div>
+
+        {% for l in products %}
+                <a href="{% url 'list' l.id %}">
+                    <div style="margin: 20px; text-align: center; border: solid 1px;">
+                        <img src="{{l.image_url}}" style="display: inline-block; width: 250px; height: 250px; text-align: start;"> 
+
+                        <div style="text-align: center; padding: 16px; display: inline-block;">
+                            <h4> {{l.title}} </h4>
+                            <h5> Price : {{l.bid_start}}</h5>
+                            {{l.created_time}} <br>
+                            {{l.seller_name}}
+                        </div>
+                    </div>
+                </a>
+        {% endfor %}
+    </center>
+{% endblock %}

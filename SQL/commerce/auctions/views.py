@@ -109,3 +109,15 @@ def list_page(request,list_id):
     return render(request,"auctions/list_page.html",{
         "product":item
     })
+
+def category(request,category):
+    category_products = Listing.objects.filter(category=category)
+    empty = False
+    if len(category_products) == 0:
+        empty = True
+    
+    return render(request,"auctions/category.html", {
+        "category":category,
+        "empty":empty,
+        "products":category_products
+    })
