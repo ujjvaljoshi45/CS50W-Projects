@@ -20,5 +20,14 @@
         <p><strong>Created On :</strong> {{product.created_time}} </p>
     </div>
 
+    {% if user.username != product.seller_name %}
+        <div>
+            <form action="{% url 'new_bid' product.id %}" method="post"> 
+                {% csrf_token %}
+                <input type="number" name="new_bid" placeholder="{{product.start_bid}}" required>
+            </form>
+        </div>
+    {% endif %}
+
     
 {% endblock %}

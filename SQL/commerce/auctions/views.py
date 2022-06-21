@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listing
+from .models import Bid, User, Listing
 
 class ListingForm(ModelForm):
     class Meta:
@@ -110,6 +110,24 @@ def list_page(request,list_id):
         "product":item
     })
 
+def new_bid(request,list_id):
+    item = Listing.objects.get(id = list_id)
+    if (int(request.POST.get('new_bid')) <= item.bid_start):
+        return render(request,"auctions/list_page.html",{
+        "product":item,
+        "message" : f"Bid should be greater then {item.bid_start}"
+    })
+    
+    item.bid_start = int(request.POST.get('new_bid'))
+    item.save()
+    bid = Bid()
+    bid.user = request.POST.get('username')
+    bid.bid_id = list_id
+    bid.title = item.title
+    bid.bid = item.bid_start
+    return render(request,"auctions/list_page.html",{
+        "product":item
+    })
 def category(request,category):
     category_products = Listing.objects.filter(category=category)
     empty = False
