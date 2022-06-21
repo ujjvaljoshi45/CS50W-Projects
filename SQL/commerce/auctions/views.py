@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.forms import ModelForm
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .models import Bid, User, Listing
@@ -15,11 +15,9 @@ class ListingForm(ModelForm):
         model = Listing
         fields = ['title','description','bid_start','category','image_url']
 def index(request):
-    # if request.user.is_authenticatied():
     return render(request, "auctions/index.html",{
         "listing" : Listing.objects.all()
     })    
-    # return render(request, "auctions/index.html")
 
 
 def login_view(request):
@@ -113,10 +111,7 @@ def list_page(request,list_id):
 def new_bid(request,list_id):
     item = Listing.objects.get(id = list_id)
     if (int(request.POST.get('new_bid')) <= item.bid_start):
-        return render(request,"auctions/list_page.html",{
-        "product":item,
-        "message" : f"Bid should be greater then {item.bid_start}"
-    })
+        return redirect("list",list_id)
     
     item.bid_start = int(request.POST.get('new_bid'))
     item.save()
@@ -125,9 +120,7 @@ def new_bid(request,list_id):
     bid.bid_id = list_id
     bid.title = item.title
     bid.bid = item.bid_start
-    return render(request,"auctions/list_page.html",{
-        "product":item
-    })
+    return redirect("list",list_id)
 def category(request,category):
     category_products = Listing.objects.filter(category=category)
     empty = False

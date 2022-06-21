@@ -25,9 +25,8 @@
             <form action="{% url 'new_bid' product.id %}" method="post"> 
                 {% csrf_token %}
                 <input type="number" name="new_bid" placeholder="{{product.start_bid}}" required>
+                <input type="submit" value="Bid">
             </form>
         </div>
     {% endif %}
-
-    
 {% endblock %}
