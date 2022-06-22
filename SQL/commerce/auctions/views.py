@@ -1,6 +1,7 @@
 from dataclasses import fields
 from pyexpat import model
 from typing import List
+from xml.etree.ElementTree import Comment
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.forms import ModelForm
@@ -8,12 +9,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .models import Bid, User, Listing
+from .models import Bid, User, Listing, Comment
 
-class ListingForm(ModelForm):
-    class Meta:
-        model = Listing
-        fields = ['title','description','bid_start','category','image_url']
 def index(request):
     return render(request, "auctions/index.html",{
         "listing" : Listing.objects.all()
@@ -102,25 +99,31 @@ def create_listing(request):
     else:
         return render(request,"auctions/create_listing.html")
 def list_page(request,list_id):
-    
     item = Listing.objects.get(id = list_id)
-    return render(request,"auctions/list_page.html",{
-        "product":item
-    })
+    new_bid = 0
+    comments = "No comments added!"
+    if request.POST:
+        comments = Comment.objects.get(id = list_id)
+        new_bid = int(request.POST.get('new_bid'))
+    if new_bid > item.bid_start:
+        item.bid_start = int(request.POST.get('new_bid'))
+        item.save()
+        bid = Bid()
+        bid.user = request.POST.get('username')
+        bid.bid_id = list_id
+        bid.title = item.title
+        bid.bid = item.bid_start
+        return render(request,"auctions/list_page.html",{
+            "product":item,
+            "comments":Comment.objects.all()
+        })
+    else:
+        return render(request,"auctions/list_page.html",{
+            "product":item,
+            "comments":Comment.objects.all(),
+            "message":"Enter a valid bid!"
+        })
 
-def new_bid(request,list_id):
-    item = Listing.objects.get(id = list_id)
-    if (int(request.POST.get('new_bid')) <= item.bid_start):
-        return redirect("list",list_id)
-    
-    item.bid_start = int(request.POST.get('new_bid'))
-    item.save()
-    bid = Bid()
-    bid.user = request.POST.get('username')
-    bid.bid_id = list_id
-    bid.title = item.title
-    bid.bid = item.bid_start
-    return redirect("list",list_id)
 def category(request,category):
     category_products = Listing.objects.filter(category=category)
     empty = False
@@ -131,4 +134,20 @@ def category(request,category):
         "category":category,
         "empty":empty,
         "products":category_products
+    })
+
+def add_comment(request,list_id):
+    item = Listing.objects.get(id = list_id)
+    comment = Comment()
+    if request.POST:
+        comment.user = request.POST.get('username')
+        comment.commet = request.POST.get('comment')
+        comment.bid_id = list_id
+        comment.save()
+        return render(request,"auctions/list_page.html",{
+            "product": Listing.objects.get(id = list_id),
+            "comments":Comment.objects.all()
+        })
+    return render(request,"auctions/list_page.html",{
+        "product": Listing.objects.get(id = list_id)
     })

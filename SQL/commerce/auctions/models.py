@@ -27,7 +27,7 @@ class Comment(models.Model):
    user = models.CharField(max_length=64)
    commet = models.CharField(max_length=64)
    bid_id = models.IntegerField()
-   tempstamp = models.DateTimeField(auto_now_add=True)
+   timestamp = models.DateTimeField(auto_now_add=True)
 
 class Watchlist(models.Model):
    user = models.CharField(max_length=64)
