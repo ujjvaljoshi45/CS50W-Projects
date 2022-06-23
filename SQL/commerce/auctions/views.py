@@ -1,15 +1,13 @@
-from dataclasses import fields
-from pyexpat import model
-from typing import List
+
+from math import prod
 from xml.etree.ElementTree import Comment
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.forms import ModelForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .models import Bid, User, Listing, Comment
+from .models import Bid, User, Listing, Comment, Watchlist
 
 def index(request):
     return render(request, "auctions/index.html",{
@@ -103,7 +101,6 @@ def list_page(request,list_id):
     new_bid = 0
     comments = "No comments added!"
     if request.POST:
-        comments = Comment.objects.get(id = list_id)
         new_bid = int(request.POST.get('new_bid'))
     if new_bid > item.bid_start:
         item.bid_start = int(request.POST.get('new_bid'))
@@ -151,3 +148,8 @@ def add_comment(request,list_id):
     return render(request,"auctions/list_page.html",{
         "product": Listing.objects.get(id = list_id)
     })
+
+"""
+TODO : ADD Watchlist
+TODO : ADD Close Bid Functionality
+"""

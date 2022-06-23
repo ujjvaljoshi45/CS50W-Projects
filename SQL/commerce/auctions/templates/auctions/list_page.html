@@ -29,7 +29,13 @@
         <h1><strong><span style="background-color: rgb(196, 123, 123); font-family: sans-serif;" >{{message}}</span></strong> </h1>
     </div>
     {% endif %}
-
+    {% if user.username != product.seller_name %}
+        <form action="{% url 'add_wishlist' product.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="username" value="{{user.username}}">
+            <input type="submit" value="Add To Wishlist">
+        </form> <br>
+    {% endif %}
     <div>
         {% if comments %}
             {% for comment in comments %}
@@ -42,7 +48,9 @@
 
     <div>
         {% if user.username != product.seller_name %}
+        
             <h3>Add Comment</h3>
+            
             <form action="{% url 'add_comment' product.id %}" method="post">
                 {% csrf_token %}
                 <input name="username" type="hidden" value="{{ user.username }}">
