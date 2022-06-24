@@ -1,64 +1,80 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-    <div>
-        <h1><strong>{{ product.title }}</strong></h1> <br>
-    </div>
+<div>
+    <h1><strong>{{ product.title }}</strong></h1> <br>
+</div>
 
-    <div>
-        <img src="{{product.image_url}}" style="height: 250px; width: 250px;"> <br>
+<div>
+    <img src="{{product.image_url}}" style="height: 250px; width: 250px;"> <br>
+    <br>
+    <p><strong>Description :</strong> {{product.description}} </p>
+    <p><strong>Category :</strong> {{product.category}} </p>
+    <p><strong>Current Bid Price :</strong> {{product.bid_start}} </p>
+    <p><strong>Seller :</strong> {{product.seller_name}} </p>
+    <p><strong>Created On :</strong> {{product.created_time}} </p>
+</div>
+
+{% if not winner %}
+{% if user.username == product.seller_name %}
+<div>
+    <form action="{% url 'close_bid' product.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="Close Bid">
+    </form>
+</div>
+{% endif %}
+{% if user.username != product.seller_name %}
+<div>
+    <form action="{% url 'list' product.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="username" value="{{user.username}}">
+        <input type="number" name="new_bid" placeholder="{{product.start_bid}}" required>
+        <input type="submit" value="Bid">
+    </form>
+</div>
+{% endif %}
+{% if message %}
+<div>
+    <h1><strong><span style="background-color: rgb(196, 123, 123); font-family: sans-serif;">{{message}}</span></strong>
+    </h1>
+</div>
+{% endif %}
+{% if user.username != product.seller_name %}
+<form action="{% url 'add_wishlist' product.id %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="username" value="{{user.username}}">
+    <input type="submit" value="Add To Wishlist">
+</form> <br>
+{% endif %}
+{% endif %}
+
+{% if winner %}
+    <h1>Winner {{winner.winner}}</h1>
+{% endif %}
+<div>
+    {% if comments %}
+    {% for comment in comments %}
+    <h5>{{ comment.user }}</h5>
+    <p>{{comment.commet}}</p>
+    <p>{{comment.timestamp}}</p>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div>
+    {% if user.username != product.seller_name %}
+
+    <h3>Add Comment</h3>
+
+    <form action="{% url 'add_comment' product.id %}" method="post">
+        {% csrf_token %}
+        <input name="username" type="hidden" value="{{ user.username }}">
         <br>
-        <p><strong>Description :</strong> {{product.description}} </p>
-        <p><strong>Category :</strong> {{product.category}} </p>
-        <p><strong>Current Bid Price :</strong> {{product.bid_start}} </p>
-        <p><strong>Seller :</strong> {{product.seller_name}} </p>
-        <p><strong>Created On :</strong> {{product.created_time}} </p>
-    </div>
-
-    {% if user.username != product.seller_name %}
-        <div>
-            <form action="{% url 'list' product.id %}" method="post"> 
-                {% csrf_token %}
-                <input type="number" name="new_bid" placeholder="{{product.start_bid}}" required>
-                <input type="submit" value="Bid">
-            </form>
-        </div>
+        <textarea name="comment" rows="4" placeholder="Comment Here"></textarea>
+        <br>
+        <input type="submit" value="Comment">
+    </form>
     {% endif %}
-    {% if message %}
-    <div>
-        <h1><strong><span style="background-color: rgb(196, 123, 123); font-family: sans-serif;" >{{message}}</span></strong> </h1>
-    </div>
-    {% endif %}
-    {% if user.username != product.seller_name %}
-        <form action="{% url 'add_wishlist' product.id %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="username" value="{{user.username}}">
-            <input type="submit" value="Add To Wishlist">
-        </form> <br>
-    {% endif %}
-    <div>
-        {% if comments %}
-            {% for comment in comments %}
-                <h5>{{ comment.user }}</h5>
-                <p>{{comment.commet}}</p>
-                <p>{{comment.timestamp}}</p>
-            {% endfor %}
-        {% endif %}
-    </div>
-
-    <div>
-        {% if user.username != product.seller_name %}
-        
-            <h3>Add Comment</h3>
-            
-            <form action="{% url 'add_comment' product.id %}" method="post">
-                {% csrf_token %}
-                <input name="username" type="hidden" value="{{ user.username }}">
-                <br>
-                <textarea name="comment" rows="4" placeholder="Comment Here"></textarea>
-                <br>
-                <input type="submit" value="Comment">
-            </form>
-        {% endif %}
-    </div>
+</div>
 {% endblock %}

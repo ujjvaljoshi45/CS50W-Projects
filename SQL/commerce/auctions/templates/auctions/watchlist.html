@@ -1,20 +1,22 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>Watchlist</h1>
-    {% if message %}
-    <p>{{message}}</p>
-    {% endif %}
-    {% for l in list %}
-        <div style="margin: 20px; text-align: center; border: solid 1px;">
-                <img src="{{l.image_url}}" style="display: inline-block; width: 250px; height: 250px; text-align: start;"> 
+<h1>Watchlist</h1>
+{% if message %}
+<p>{{message}}</p>
+{% endif %}
+{% for l in list %}
+<a href="{% url 'list' l.id %}">
+    <div style="margin: 20px; text-align: center; border: solid 1px;">
+        <img src="{{l.image_url}}" style="display: inline-block; width: 250px; height: 250px; text-align: start;">
 
-                <div style="text-align: center; padding: 16px; display: inline-block;">
-                        <h4> {{l.title}} </h4>
-                        <h5> Price : {{l.bid_start}}</h5>
-                        {{l.created_time}} <br>
-                        {{l.seller_name}}
-                </div>
+        <div style="text-align: center; padding: 16px; display: inline-block;">
+            <h4> {{l.title}} </h4>
+            <h5> Price : {{l.bid_start}}</h5>
+            {{l.created_time}} <br>
+            {{l.seller_name}}
         </div>
-    {% endfor %}
+    </div>
+</a>
+{% endfor %}
 {% endblock %}
